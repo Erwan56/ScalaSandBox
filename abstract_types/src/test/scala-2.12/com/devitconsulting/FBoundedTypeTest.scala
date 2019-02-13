@@ -35,35 +35,55 @@ class FBoundedTypeTest extends FunSuite with Matchers {
     List[A forSome {type A <: Control[A]}](BcdControl(), AirControl()).map(x => println(exec(x, "sameInput")))
   }
 
-  test("F Bounded Type WIP") {
+  test("use wrapper") {
+    object ControlAddons {
+
+      implicit object DivingControl1 extends DivingControl[DivingControl1Input] {
+        override def control(input: DivingControl1Input): Unit = ???
+      }
+
+    }
+
+    import ControlAddons._
 
     trait ControlInput
     trait DivingControlInput extends ControlInput
-    class DivingControlConcreteInput extends DivingControlInput
 
-    trait Control[T <: ControlInput, A <: Control[T, A]] {
+    trait Control[T] {
       def control(input: T)
     }
 
-    trait DivingControl[T <: DivingControlInput] extends Control[T, DivingControl[T]]
+    case class DivingControl1Input() extends ControlInput
+    trait DivingControl[T <: DivingControlInput] extends Control[T]
 
-    class DivingControlConcrete extends DivingControl[DivingControlConcreteInput] {
-      override def control(input: DivingControlConcreteInput): Unit = println("youpi")
+
+    case class Executable[Input](input: Input, control: Control[Input]) {
+      def execute(): Unit = control.control(input)
     }
 
-    //  case class BcdControlInput() extends DivingControlInput
-    //  trait BcdControl extends DivingControl[BcdControlInput]
+    def asExecutable[A](a: A)(implicit s: Control[A]): Executable[A] = Executable(a, s)
+
+    val controls = List[Control[_]](DivingControl1)
+    controls.map(_.control())
+
+
+    //    trait Controllable[A] {
+    //      // transaction ou dom
+    //      def control(a: A): Unit
+    //    }
     //
-    //  class BcdControl1 extends BcdControl {
-    //    override def control(input: BcdControlInput): Unit = ???
-    //  }
-
-
-    //    exec(new DivingControlConcrete, new DivingControlConcreteInput)
-
-    def exec[T <: ControlInput, A <: Control[T, A]](control: A, input: T) = {
-      control.control(input)
-    }
+    //    case class Tx()
+    //    implicit object Control1 extends Controllable[Tx] {
+    //      override def control(a: Tx): Unit = "control1"
+    //    }
+    //
+    //    case class Executable[Input](input: Input, control: Control[Input]) {
+    //            def execute(): Unit = control.control(input)
+    //          }
+    //    def asExecutable[A](a: A)(implicit s: Control[A]): Executable[A] = Executable(a, s)
+    //
+    //    val controlList = List[Controllable[_]](Control1)
+//    controlList.map(_.control(Tx()))
   }
 
 }

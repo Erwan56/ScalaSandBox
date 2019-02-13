@@ -35,7 +35,7 @@ class FBoundedTypeTest extends FunSuite with Matchers {
     List[A forSome {type A <: Control[A]}](BcdControl(), AirControl()).map(x => println(exec(x, "sameInput")))
   }
 
-  test("use wrapper") {
+  /*test("use wrapper") {
     object ControlAddons {
 
       implicit object DivingControl1 extends DivingControl[DivingControl1Input] {
@@ -64,7 +64,7 @@ class FBoundedTypeTest extends FunSuite with Matchers {
     def asExecutable[A](a: A)(implicit s: Control[A]): Executable[A] = Executable(a, s)
 
     val controls = List[Control[_]](DivingControl1)
-    controls.map(_.control())
+    //controls.map(_.control())
 
 
     //    trait Controllable[A] {
@@ -85,5 +85,6 @@ class FBoundedTypeTest extends FunSuite with Matchers {
     //    val controlList = List[Controllable[_]](Control1)
 //    controlList.map(_.control(Tx()))
   }
+  */
 
 }

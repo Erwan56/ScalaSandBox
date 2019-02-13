@@ -44,4 +44,40 @@ class FunctionCompositionTest extends FunSuite with Matchers {
     println(customerRules(kevinCust))
     println(customerRules(henryCust))
   }
+
+  test("function composition through implicit"){
+    case class Customer(name: String, age: Int, oldFlag: Boolean = false, dumbNameFlag: Boolean = false)
+
+    implicit class CustomerRules(customer: Customer) {
+      def setOldFlag(): Customer = {
+        if(customer.age > 50)
+          customer.copy(oldFlag = true)
+        else
+          customer
+      }
+
+      def setDumbName(dumbName: String): Customer = {
+          if(customer.name == dumbName)
+            customer.copy(dumbNameFlag = true)
+          else
+            customer
+        }
+      }
+
+
+    val kevinCust = Customer("kevin", age = 10)
+    val henryCust = Customer("henry", age = 52)
+
+    println("-- old flag")
+    println(kevinCust.setOldFlag())
+    println(henryCust.setOldFlag())
+
+    println("-- dumb flag")
+    println(kevinCust.setDumbName("kevin"))
+    println(henryCust.setDumbName("kevin"))
+
+    println("-- old and dumb flag")
+    println(kevinCust.setOldFlag().setDumbName("kevin"))
+    println(henryCust.setOldFlag().setDumbName("kevin"))
+  }
 }
